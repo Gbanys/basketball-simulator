@@ -7,63 +7,40 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 
-def train_mid_range_model():
-
-    scaled_distance_from_basket, shot_made_by_distance = generate_random_distance_data()
+def train_free_throw_model():
     scaled_player_ability, shot_made_by_ability = generate_random_player_ability_data()
     scaled_player_energy, shot_made_by_energy = generate_random_player_energy_data()
     scaled_shot_quality, shot_made_by_shot_quality = generate_random_shot_quality_data()
 
-    mid_range_dataframe = pd.DataFrame({'scaled_distance_from_basket' : [scaled_distance_from_basket[i][0] for i in range(0, len(scaled_distance_from_basket))],
-            'scaled_player_ability' : [scaled_player_ability[i][0] for i in range(0, len(scaled_player_ability))],
+    free_throw_dataframe = pd.DataFrame({'scaled_player_ability' : [scaled_player_ability[i][0] for i in range(0, len(scaled_player_ability))],
             'scaled_player_energy' : [scaled_player_energy[i][0] for i in range(0, len(scaled_player_energy))],
             'scaled_shot_quality' : [scaled_shot_quality[i][0] for i in range(0, len(scaled_shot_quality))],
-            'shot_made_by_distance' : shot_made_by_distance,
             'shot_made_by_ability' : shot_made_by_ability,
             'shot_made_by_energy' : shot_made_by_energy,
             'shot_made_by_shot_quality' : shot_made_by_shot_quality
     })
     def determine_if_shot_made(value):
-        if value >= 0.5:
+        if value > 0.7:
             return 1
         else:
             return 0
-
-    mid_range_dataframe['shot_made_overall'] = mid_range_dataframe[['shot_made_by_distance', 'shot_made_by_ability', 'shot_made_by_energy', 'shot_made_by_shot_quality']]\
+        
+    free_throw_dataframe['shot_made_overall'] = free_throw_dataframe[['shot_made_by_ability', 'shot_made_by_energy', 'shot_made_by_shot_quality']]\
     .apply(lambda x: np.mean(x), axis=1)
-    mid_range_dataframe['shot_made_overall'] = mid_range_dataframe['shot_made_overall'].apply(determine_if_shot_made)
+    free_throw_dataframe['shot_made_overall'] = free_throw_dataframe['shot_made_overall'].apply(determine_if_shot_made)
 
-    input_features = mid_range_dataframe[['scaled_distance_from_basket', 'scaled_player_ability', 'scaled_player_energy', 'scaled_shot_quality']]
-    shot_made_overall = mid_range_dataframe['shot_made_overall']
+    input_features = free_throw_dataframe[['scaled_player_ability', 'scaled_player_energy', 'scaled_shot_quality']]
+    shot_made_overall = free_throw_dataframe['shot_made_overall']
 
     X_train, X_test, y_train, y_test = train_test_split(input_features, shot_made_overall)
 
-    mid_range_model = LogisticRegression().fit(X_train, y_train)
-    score = mid_range_model.score(X_test, y_test)
+    free_throw_model = LogisticRegression().fit(X_train, y_train)
+    score = free_throw_model.score(X_test, y_test)
 
     print("Model training SUCCESSFUL:")
     print(f'Model score: {score}')
 
-    pickle.dump(mid_range_model, open('models/mid_range_model.pkl', 'wb'))
-
-
-
-def generate_random_distance_data():
-
-    scaler = MinMaxScaler()
-    distance_from_basket = np.array([random.uniform(15, 23) for i in range(0, 2000)])
-    scaled_distance_from_basket = scaler.fit_transform(distance_from_basket.reshape(-1,1))
-
-    shot_made_by_distance = []
-
-    for i in range(0, len(scaled_distance_from_basket)):
-        x_value = scaled_distance_from_basket[i][0]
-        p_shot_made = np.exp(-x_value / 3) - 0.3
-        p_shot_not_made = 1 - p_shot_made
-        y_value = np.random.choice([1, 0], p=[p_shot_made, p_shot_not_made])
-        shot_made_by_distance.append(y_value)
-
-    return scaled_distance_from_basket, shot_made_by_distance
+    pickle.dump(free_throw_model, open('models/free_throw_model.pkl', 'wb'))
 
 
 def generate_random_player_ability_data():
@@ -123,6 +100,4 @@ def generate_random_shot_quality_data():
     return scaled_shot_quality, shot_made_by_shot_quality
 
 
-train_mid_range_model()
-
-    
+train_free_throw_model()

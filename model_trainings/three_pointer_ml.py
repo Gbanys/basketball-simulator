@@ -7,14 +7,14 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 
-def train_mid_range_model():
+def train_three_pointer_model():
 
     scaled_distance_from_basket, shot_made_by_distance = generate_random_distance_data()
     scaled_player_ability, shot_made_by_ability = generate_random_player_ability_data()
     scaled_player_energy, shot_made_by_energy = generate_random_player_energy_data()
     scaled_shot_quality, shot_made_by_shot_quality = generate_random_shot_quality_data()
 
-    mid_range_dataframe = pd.DataFrame({'scaled_distance_from_basket' : [scaled_distance_from_basket[i][0] for i in range(0, len(scaled_distance_from_basket))],
+    three_pointer_dataframe = pd.DataFrame({'scaled_distance_from_basket' : [scaled_distance_from_basket[i][0] for i in range(0, len(scaled_distance_from_basket))],
             'scaled_player_ability' : [scaled_player_ability[i][0] for i in range(0, len(scaled_player_ability))],
             'scaled_player_energy' : [scaled_player_energy[i][0] for i in range(0, len(scaled_player_energy))],
             'scaled_shot_quality' : [scaled_shot_quality[i][0] for i in range(0, len(scaled_shot_quality))],
@@ -29,22 +29,22 @@ def train_mid_range_model():
         else:
             return 0
 
-    mid_range_dataframe['shot_made_overall'] = mid_range_dataframe[['shot_made_by_distance', 'shot_made_by_ability', 'shot_made_by_energy', 'shot_made_by_shot_quality']]\
+    three_pointer_dataframe['shot_made_overall'] = three_pointer_dataframe[['shot_made_by_distance', 'shot_made_by_ability', 'shot_made_by_energy', 'shot_made_by_shot_quality']]\
     .apply(lambda x: np.mean(x), axis=1)
-    mid_range_dataframe['shot_made_overall'] = mid_range_dataframe['shot_made_overall'].apply(determine_if_shot_made)
+    three_pointer_dataframe['shot_made_overall'] = three_pointer_dataframe['shot_made_overall'].apply(determine_if_shot_made)
 
-    input_features = mid_range_dataframe[['scaled_distance_from_basket', 'scaled_player_ability', 'scaled_player_energy', 'scaled_shot_quality']]
-    shot_made_overall = mid_range_dataframe['shot_made_overall']
+    input_features = three_pointer_dataframe[['scaled_distance_from_basket', 'scaled_player_ability', 'scaled_player_energy', 'scaled_shot_quality']]
+    shot_made_overall = three_pointer_dataframe['shot_made_overall']
 
     X_train, X_test, y_train, y_test = train_test_split(input_features, shot_made_overall)
 
-    mid_range_model = LogisticRegression().fit(X_train, y_train)
-    score = mid_range_model.score(X_test, y_test)
+    three_pointer_model = LogisticRegression().fit(X_train, y_train)
+    score = three_pointer_model.score(X_test, y_test)
 
     print("Model training SUCCESSFUL:")
     print(f'Model score: {score}')
 
-    pickle.dump(mid_range_model, open('models/mid_range_model.pkl', 'wb'))
+    pickle.dump(three_pointer_model, open('models/three_pointer_model.pkl', 'wb'))
 
 
 
@@ -123,6 +123,4 @@ def generate_random_shot_quality_data():
     return scaled_shot_quality, shot_made_by_shot_quality
 
 
-train_mid_range_model()
-
-    
+train_three_pointer_model()
