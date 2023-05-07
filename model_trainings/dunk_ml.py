@@ -71,7 +71,7 @@ def generate_random_player_energy_data():
 
     for i in range(0, len(scaled_player_energy)):
         x_value = scaled_player_energy[i][0]
-        p_shot_made = np.exp(x_value / 5) - 0.8
+        p_shot_made = x_value
         p_shot_not_made = 1 - p_shot_made
         y_value = np.random.choice([1, 0], p=[p_shot_made, p_shot_not_made])
         shot_made_by_energy.append(y_value)
