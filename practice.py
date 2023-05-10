@@ -4,7 +4,7 @@ from classes.player import Player
 import pickle
 
 time_start = datetime.now()
-time_end = datetime.now() + timedelta(0, 300)
+time_end = datetime.now() + timedelta(0, 60)
 
 dunk_ml_model = pickle.load(open('models/dunk_model.pkl', 'rb'))
 layup_ml_model = pickle.load(open('models/layup_model.pkl', 'rb'))
@@ -14,23 +14,24 @@ three_pointer_ml_model = pickle.load(open('models/three_pointer_model.pkl', 'rb'
 
 player = Player(
     name = "Abril Diaz",
-    dunk_ability=70,
-    layup_ability=70,
+    dunk_ability=60,
+    layup_ability=60,
     free_throw_ability=80,
-    mid_range_ability=70,
-    three_pointer_ability=70,
+    mid_range_ability=83,
+    three_pointer_ability=80,
     energy = 90,
     energy_depletion_rate=2,
+    defending=60,
     dunk_tendency=20,
     layup_tendency=80,
     mid_range_tendency=70,
-    three_pointer_tendency=30
+    three_pointer_tendency=30,
+    opponent_on_ball_defending = 80,
+    position = 'PG',
+    team_name='Eagles'
 )
 
-score = 0
-
 current_time = datetime.now()
-
 
 while current_time < time_end:
 

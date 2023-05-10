@@ -13,27 +13,30 @@ def train_three_pointer_model():
     scaled_player_ability, shot_made_by_ability = generate_random_player_ability_data()
     scaled_player_energy, shot_made_by_energy = generate_random_player_energy_data()
     scaled_shot_quality, shot_made_by_shot_quality = generate_random_shot_quality_data()
+    scaled_on_ball_defending, shot_made_by_on_ball_defending = generate_random_player_defense_data()
 
     three_pointer_dataframe = pd.DataFrame({'scaled_distance_from_basket' : [scaled_distance_from_basket[i][0] for i in range(0, len(scaled_distance_from_basket))],
             'scaled_player_ability' : [scaled_player_ability[i][0] for i in range(0, len(scaled_player_ability))],
             'scaled_player_energy' : [scaled_player_energy[i][0] for i in range(0, len(scaled_player_energy))],
             'scaled_shot_quality' : [scaled_shot_quality[i][0] for i in range(0, len(scaled_shot_quality))],
+            'scaled_on_ball_defending' : [scaled_on_ball_defending[i][0] for i in range(0, len(scaled_on_ball_defending))],
             'shot_made_by_distance' : shot_made_by_distance,
             'shot_made_by_ability' : shot_made_by_ability,
             'shot_made_by_energy' : shot_made_by_energy,
-            'shot_made_by_shot_quality' : shot_made_by_shot_quality
+            'shot_made_by_shot_quality' : shot_made_by_shot_quality,
+            'shot_made_by_on_ball_defending' : shot_made_by_on_ball_defending
     })
     def determine_if_shot_made(value):
-        if value >= 0.5:
+        if value >= 0.6:
             return 1
         else:
             return 0
 
-    three_pointer_dataframe['shot_made_overall'] = three_pointer_dataframe[['shot_made_by_distance', 'shot_made_by_ability', 'shot_made_by_energy', 'shot_made_by_shot_quality']]\
+    three_pointer_dataframe['shot_made_overall'] = three_pointer_dataframe[['shot_made_by_distance', 'shot_made_by_ability', 'shot_made_by_energy', 'shot_made_by_shot_quality', 'shot_made_by_on_ball_defending']]\
     .apply(lambda x: np.mean(x), axis=1)
     three_pointer_dataframe['shot_made_overall'] = three_pointer_dataframe['shot_made_overall'].apply(determine_if_shot_made)
 
-    input_features = three_pointer_dataframe[['scaled_distance_from_basket', 'scaled_player_ability', 'scaled_player_energy', 'scaled_shot_quality']]
+    input_features = three_pointer_dataframe[['scaled_distance_from_basket', 'scaled_player_ability', 'scaled_player_energy', 'scaled_shot_quality', 'scaled_on_ball_defending']]
     shot_made_overall = three_pointer_dataframe['shot_made_overall']
 
     X_train, X_test, y_train, y_test = train_test_split(input_features, shot_made_overall)
@@ -121,6 +124,25 @@ def generate_random_shot_quality_data():
         shot_made_by_shot_quality.append(y_value)
 
     return scaled_shot_quality, shot_made_by_shot_quality
+
+
+def generate_random_player_defense_data():
+
+    scaler=MinMaxScaler()
+
+    opponent_on_ball_defending = np.array([random.uniform(0, 100) for i in range(0, 2000)])
+    scaled_on_ball_defending = scaler.fit_transform(opponent_on_ball_defending.reshape(-1,1))
+
+    shot_made_by_on_ball_defending = []
+
+    for i in range(0, len(scaled_on_ball_defending)):
+        x_value = scaled_on_ball_defending[i][0]
+        p_shot_made = -x_value**20 + 1
+        p_shot_not_made = 1 - p_shot_made
+        y_value = np.random.choice([1, 0], p=[p_shot_made, p_shot_not_made])
+        shot_made_by_on_ball_defending.append(y_value)
+
+    return scaled_on_ball_defending, shot_made_by_on_ball_defending
 
 
 train_three_pointer_model()

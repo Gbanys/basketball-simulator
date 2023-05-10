@@ -23,11 +23,17 @@ class Player:
     three_pointer_ability: float
     energy: float
     energy_depletion_rate: float
+    defending: float
 
     dunk_tendency: float
     layup_tendency: float
     mid_range_tendency: float
     three_pointer_tendency: float
+
+    position: str
+    team_name: str
+
+    opponent_on_ball_defending: float
 
     _2PT_field_goal_attempts = 0
     _3PT_field_goal_attempts = 0
@@ -47,10 +53,14 @@ class Player:
             three_pointer_ability, 
             energy,
             energy_depletion_rate,
+            defending,
             dunk_tendency,
             layup_tendency,
             mid_range_tendency,
-            three_pointer_tendency
+            three_pointer_tendency,
+            opponent_on_ball_defending,
+            position,
+            team_name
         ):
 
         self.name = name
@@ -61,10 +71,14 @@ class Player:
         self.three_pointer_ability = min_max_normalize(three_pointer_ability, 0, 100)
         self.energy = min_max_normalize(energy, 0, 100)
         self.energy_depletion_rate = energy_depletion_rate
+        self.defending = min_max_normalize(defending, 0, 100)
         self.dunk_tendency = dunk_tendency
         self.layup_tendency = layup_tendency
         self.mid_range_tendency = mid_range_tendency
         self.three_pointer_tendency = three_pointer_tendency
+        self.opponent_on_ball_defending = min_max_normalize(opponent_on_ball_defending, 0, 100)
+        self.position = position
+        self.team_name = team_name
 
         return
 
@@ -85,7 +99,7 @@ class Player:
     def dunk(self, dunk_ml_model):
         print(f'{self.name} attempts a dunk.')
         time.sleep(2)
-        outcome = dunk_ml_model.predict(np.array([[self.dunk_ability, self.energy]]))
+        outcome = dunk_ml_model.predict(np.array([[self.dunk_ability, self.energy, self.opponent_on_ball_defending]]))
         if outcome == 1:
             print(f'{self.name} dunks it successfully.')
         else:
@@ -97,7 +111,7 @@ class Player:
     def do_layup(self, layup_ml_model):
         print(f'{self.name} attempts a layup.')
         time.sleep(2)
-        outcome = layup_ml_model.predict(np.array([[self.layup_ability, self.energy]]))
+        outcome = layup_ml_model.predict(np.array([[self.layup_ability, self.energy, self.opponent_on_ball_defending]]))
         if outcome == 1:
             print(f'{self.name} makes a simple layup.')
         else:
@@ -107,7 +121,7 @@ class Player:
     
     
     def shoot_free_throw(self, free_throw_ml_model):
-        shot_quality = min_max_normalize(random.randint(10, 90), 0, 100)
+        shot_quality = min_max_normalize(random.randint(30, 90), 0, 100)
         outcome = free_throw_ml_model.predict(np.array([[self.free_throw_ability, self.energy, shot_quality]]))
         if outcome == 1:
             print(f'{self.name} makes the free throw.')
@@ -119,9 +133,9 @@ class Player:
     def shoot_mid_range(self, mid_range_ml_model: pd.DataFrame):
         print(f'{self.name} shoots from mid range.')
         time.sleep(2)
-        shot_quality = min_max_normalize(random.randint(10, 90), 0, 100)
+        shot_quality = min_max_normalize(random.randint(25, 90), 0, 100)
         distance = min_max_normalize(random.randint(15, 23), 15, 23)
-        outcome = mid_range_ml_model.predict(np.array([[distance, self.mid_range_ability, self.energy, shot_quality]]))
+        outcome = mid_range_ml_model.predict(np.array([[distance, self.mid_range_ability, self.energy, shot_quality, self.opponent_on_ball_defending]]))
         if outcome == 1:
             print(f'{self.name} makes the mid-range jumper.')
         else:
@@ -133,9 +147,9 @@ class Player:
     def shoot_three_pointer(self, three_pointer_ml_model: pd.DataFrame):
         print(f'{self.name} attempts a three point shot.')
         time.sleep(2)
-        shot_quality = min_max_normalize(random.randint(10, 90), 0, 100)
+        shot_quality = min_max_normalize(random.randint(25, 90), 0, 100)
         distance = min_max_normalize(random.randint(23, 28), 23, 28)
-        outcome = three_pointer_ml_model.predict(np.array([[distance, self.three_pointer_ability, self.energy, shot_quality]]))
+        outcome = three_pointer_ml_model.predict(np.array([[distance, self.three_pointer_ability, self.energy, shot_quality, self.opponent_on_ball_defending]]))
         if outcome == 1:
             print(f'{self.name} makes the three pointer!.')
         else:

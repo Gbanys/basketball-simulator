@@ -1,0 +1,11 @@
+﻿name,dunk_ability,layup_ability,free_throw_ability,mid_range_ability,three_pointer_ability,energy,energy_depletion_rate,defending,dunk_tendency,layup_tendency,mid_range_tendency,three_pointer_tendency,opponent_on_ball_defending,position,team_name
+Ander Villegas,60,65,75,73,71,80,2,55,10,40,55,50,0,PG,Eagles
+Mikel Salazar,60,65,80,77,75,85,1.5,60,15,35,70,55,0,SG,Eagles
+Oscar Torrente,70,67,72,70,71,80,1.5,65,15,40,50,40,0,SF,Eagles
+Gabriel Ordonez,80,75,65,55,60,80,1.2,75,30,40,10,20,0,PF,Eagles
+Sebastian Riba,66,75,65,60,65,85,2,70,20,30,40,20,0,C,Eagles
+Bruno Napoles,40,80,85,80,77,90,1.5,55,5,40,60,50,0,PG,Barcelona
+David Barbero,65,82,88,85,82,85,2,70,15,40,50,60,0,SG,Barcelona
+Inigo Cuevas,65,75,80,78,75,85,2,75,15,40,50,55,0,SF,Barcelona
+Alex Velez,70,75,75,73,65,85,1,80,20,40,60,30,0,PF,Barcelona
+Gabriel Lopez,75,85,70,80,75,90,2,70,30,40,50,50,0,C,Barcelona
